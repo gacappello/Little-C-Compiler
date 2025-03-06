@@ -1,0 +1,105 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+
+typedef enum token {
+    TOK_IDENTIFIER = 0,
+
+    // Keywords
+    TOK_AUTO,
+    TOK_BREAK,
+    TOK_CASE,
+    TOK_CHAR,
+    TOK_CONST,
+    TOK_CONTINUE,
+    TOK_DEFAULT,
+    TOK_DO,
+    TOK_DOUBLE,
+    TOK_ELSE,
+    TOK_ENUM,
+    TOK_EXTERN,
+    TOK_FLOAT,
+    TOK_FOR,
+    TOK_GOTO,
+    TOK_IF,
+    TOK_INT,
+    TOK_LONG,
+    TOK_REGISTER,
+    TOK_RETURN,
+    TOK_SHORT,
+    TOK_SIGNED,
+    TOK_SIZEOF,
+    TOK_STATIC,
+    TOK_STRUCT,
+    TOK_SWITCH,
+    TOK_TYPEDEF,
+    TOK_UNION,
+    TOK_UNSIGNED,
+    TOK_VOID,
+    TOK_VOLATILE,
+    TOK_WHILE,
+
+    // Separators
+    TOK_OPAREN,
+    TOK_CPAREN,
+    TOK_OBRACE,
+    TOK_CBRACE,
+    TOK_OBRACK,
+    TOK_CBRACK,
+    TOK_SEMICOLON,
+    TOK_COLON,
+
+    // Literals
+    TOK_INT_LITERAL,
+    TOK_CHAR_LITERAL,
+    TOK_STRING_LITERAL,
+    TOK_FLOAT_LITERAL,
+
+    // Operators
+    TOK_PLUS,
+    TOK_MINUS,
+    TOK_STAR,
+    TOK_SLASH,
+    TOK_MODULO,
+    TOK_INC,
+    TOK_DEC,
+    TOK_EQ_TO,
+    TOK_NEQ_TO,
+    TOK_GT,
+    TOK_LT,
+    TOK_GTE,
+    TOK_LTE,
+    TOK_BANG,
+    TOK_AND_AND,
+    TOK_OR_OR,
+    TOK_TILDE,
+    TOK_AND,
+    TOK_OR,
+    TOK_XOR,
+    TOK_SL,
+    TOK_SR,
+    TOK_EQ,
+    TOK_PLUS_EQ,
+    TOK_MINUS_EQ,
+    TOK_STAR_EQ,
+    TOK_SLASH_EQ,
+    TOK_MODULO_EQ,
+    TOK_AND_EQ,
+    TOK_OR_EQ,
+    TOK_XOR_EQ,
+    TOK_SL_EQ,
+    TOK_SR_EQ,
+    TOK_ARROW,
+    TOK_DOT,
+    TOK_COMMA,
+    TOK_QUESTION,
+
+    // Misc
+    TOK_COMMENT,
+    TOK_EOF,
+    TOK_INVALID,
+    TOK_COUNT
+} token_t;
+
+const char *tok_to_str(token_t tok);
+
+#endif
