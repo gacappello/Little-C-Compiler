@@ -1,138 +1,87 @@
 #ifndef AST_H
 #define AST_H
 
-#include "list.h"
+#include "token.h"
 
 typedef enum asttype {
     AST_TRANSLATION_UNIT = 0,
-    AST_EXTERNAL_DECLARATION,
-    AST_FUNCTION_DEFINITION,
-    AST_DECLARATION_SPECIFIER,
-
-    AST_STORAGE_CLASS_SPECIFIER,
-
-    AST_TYPE_SPECIFIER,
-    AST_STRUCT_OR_UNION_SPECIFIER,
-    AST_STRUCT_OR_UNION,
-    AST_STRUCT_DECLARATION,
-    AST_SPECIFIER_QUALIFIER,
-    AST_STRUCT_DECLARATOR_LIST,
-    AST_STRUCT_DECLARATOR,
-    AST_DECLARATOR,
-    AST_POINTER,
-    AST_TYPE_QUALIFIER,
-    AST_DIRECT_DECLARATOR,
-    AST_CONSTANT_EXPRESSION,
-    AST_CONDITIONAL_EXPRESSION,
-    AST_LOGICAL_OR_EXPRESSION,
-    AST_LOGICAL_AND_EXPRESSION,
-    AST_INCLUSIVE_OR_EXPRESSION,
-    AST_EXCLUSIVE_OR_EXPRESSION,
-    AST_AND_EXPRESSION,
-    AST_EQUALITY_EXPRESSION,
-    AST_RELATIONAL_EXPRESSION,
-    AST_SHIFT_EXPRESSION,
-    AST_ADDITIVE_EXPRESSION,
-    AST_MULTIPLICATIVE_EXPRESSION,
-    AST_CAST_EXPRESSION,
-    AST_UNARY_EXPRESSION,
-    AST_POSTFIX_EXPRESSION,
-    AST_PRIMARY_EXPRESSION,
-    AST_CONSTANT,
-    AST_EXPRESSION,
-    AST_ASSIGNMENT_EXPRESSION,
-    AST_ASSIGNMENT_OPERATOR,
+    AST_BINARY_OPERATOR,
     AST_UNARY_OPERATOR,
-    AST_TYPE_NAME,
-    AST_PARAMETER_TYPE_LIST,
-    AST_PARAMETER_LIST,
-    AST_PARAMETER_DECLARATION,
-    AST_ABSTRACT_DECLARATOR,
-    AST_DIRECT_ABSTRACT_DECLARATOR,
-    AST_ENUM_SPECIFIER,
-    AST_ENUMERATOR_LIST,
-    AST_ENUMERATOR,
-    AST_TYPEDEF_NAME,
-    AST_DECLARATION,
-    AST_INIT_DECLARATOR,
-    AST_INITIALIZER,
-    AST_INITIALIZER_LIST,
-    AST_COMPOUND_STATEMENT,
-    AST_STATEMENT,
-    AST_LABELED_STATEMENT,
-    AST_EXPRESSION_STATEMENT,
-    AST_SELECTION_STATEMENT,
-    AST_ITERATION_STATEMENT,
-    AST_JUMP_STATEMENT,
+    AST_LITERAL,
+    AST_IDENTIFIER,
+    AST_STMT,
     AST_CNT,
 } asttype_t;
 
-enum storage_class_specifier_type {
-    AST_STORAGE_CLASS_SPECIFIER_NONE = 0
-    AST_STORAGE_CLASS_SPECIFIER_AUTO,
-    AST_STORAGE_CLASS_SPECIFIER_REGISTER,
-    AST_STORAGE_CLASS_SPECIFIER_STATIC,
-    AST_STORAGE_CLASS_SPECIFIER_EXTERN,
-    AST_STORAGE_CLASS_SPECIFIER_TYPEDEF,
-    AST_STORAGE_CLASS_SPECIFIER_COUNT,
+enum ast_literal_type {
+    AST_LITERAL_INT = 0,
+    AST_LITERAL_FLOAT,
+    AST_LITERAL_STRING,
+    AST_LITERAL_CHAR,
 };
 
-enum type_specifier_type {
-    AST_TYPE_SPECIFIER_VOID = 0,
-    AST_TYPE_SPECIFIER_CHAR,
-    AST_TYPE_SPECIFIER_SHORT,
-    AST_TYPE_SPECIFIER_INT,
-    AST_TYPE_SPECIFIER_LONG,
-    AST_TYPE_SPECIFIER_FLOAT,
-    AST_TYPE_SPECIFIER_DOUBLE,
-    AST_TYPE_SPECIFIER_SIGNED,
-    AST_TYPE_SPECIFIER_UNSIGNED,
-    AST_TYPE_SPECIFIER_STRUCT_OR_UNION,
-    AST_TYPE_SPECIFIER_ENUM_SPECIFIER,
-    AST_TYPE_SPECIFIER_TYPEDEF_NAME,
-    AST_TYPE_SPECIFIER_TYPEDEF_COUNT,
-} 
+enum ast_stmt_type {
+    AST_STMT_COMPOUND = 0,
+    AST_STMT_EXPR,
+    AST_STMT_SELECTION,
+    AST_STMT_ITERATON,
+    AST_STMT_JUMP,
+};
 
-enum type_qualifier_type {
-    AST_TYPE_QUALIFIER_NONE = 0,
-    AST_TYPE_QUALIFIER_CONST,
-    AST_TYPE_QUALIFIER_VOLATILE,
-    AST_TYPE_QUALIFIER_COUNT,
-}
+enum ast_stmt_decl_type {
+    AST_STMT_DECL_FUNC = 0,
+    AST_STMT_DECL_DECL,
+};
 
 struct ast_translation_unit {
-    list_t *ext_decls;
+    struct ast *decls;
 };
 
-struct ast_external_declaration {
-    union {
-        struct ast *func_def;
-        struct ast *decl;
-    };
+struct ast_binary_operator {
+    struct ast *left;
+    struct ast *right;
+    token_t op;
 };
 
-struct ast_function_definition {
-    enum storage_class_specifier_type storage;
+struct ast_unary_operator {
+    struct ast *operand;
+    token_t op;
+};
+
+struct ast_literal {
     union {
-        struct ast *struct_or_union_spec;
-        struct ast *enum_spec;
-        struct ast *typedef_name;
+        
     };
-    enum type_specifier_type type_spec;
-    enum type_qualifier_type type_quali;
-    struct ast *declarator;
-    list *declarations;
-    struct ast *compound_statement;
+    enum ast_literal_type type;
+};
+
+struct ast_identifier {
+    char *identifier;
+};
+
+struct ast_statement {
+    union {
+        struct { struct ast *next; } stmt_compound;
+        struct { struct ast *left; struct ast *right; } stmt_expression;
+        struct { struct ast *expr; struct ast *body; struct ast *next; } stmt_selection;
+        struct { struct ast *init; struct ast *expr; struct ast *steps; struct ast *body; } stmt_iter;
+        struct { struct ast *expr; } stmt_jump;
+    };
+    enum ast_stmt_type type;
 };
 
 typedef struct ast {
     union {
         struct ast_translation_unit translation_unit;
-        struct ast_external_declaration external_declaration;
-        struct ast_function_definition function_definition;
-        struct ast_declaration declaration;
+        struct ast_binary_operator binary_operator;
+        struct ast_unary_operator unary_operator;
+        struct ast_literal literal;
+        struct ast_identifier identifier;
     };
     asttype_t type;
+    struct ast *next;
 } ast_t;
+
+ast_t *ast_create(asttype_t type);
 
 #endif

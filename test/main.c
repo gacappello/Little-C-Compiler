@@ -1,4 +1,4 @@
-void sum(int a, int b)
+int sum(int a, int b)
 {
     return a + b;
 }
@@ -12,7 +12,7 @@ int main()
 
     char *s = "This is a string literal";
     char ch = 'c';
-    float -3.14e-4;
+    float f = -3.14e-4f;
 
     return 0;
 }
